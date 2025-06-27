@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Aroma Ghee</title>
+    <link rel="stylesheet" href="aromaform.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Aroma Ghee</div>
+            <ul class="nav-links">
+                <li><a href="aromaproject.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="grid-container">
+        <div class="grid-item">
+            <img src="aroma-ghee-jar-500ml.png" alt="Aroma Ghee 500ml">
+            <div class="product-name">Aroma Ghee 500 ml</div>
+            <div class="price">₹300</div>
+        </div>
+        <div class="grid-item">
+            <img src="aroma-ghee-jar-100ml.png" alt="Aroma Ghee 200ml">
+            <div class="product-name">Aroma Ghee 200 ml</div>
+            <div class="price">₹120</div>
+        </div>
+        <div class="grid-item">
+            <img src="aroma-ghee-pouch-100ml.png" alt="Aroma Ghee 100ml">
+            <div class="product-name">Aroma Ghee 100 ml</div>
+            <div class="price">₹60</div>
+        </div>
+        <div class="grid-item">
+            <img src="allghee.png" alt="Aroma Ghee 50ml">
+            <div class="product-name">Aroma Ghee 50 ml</div>
+            <div class="price">₹30</div>
+        </div>
+    </div>
+    <!-- GREEN LOGO HEADER -->
+    <div class="green-header">
+        <h1>SAM AND DANI AGENCY</h1>
+        <img src="logo.png" alt="Logo" />
+        <h2>Aroma Ghee and Dairy Products</h2>
+    </div>
+
+    <!-- ORDER FORM -->
+    <div class="container">
+        <h2>Welcome to Aroma Ghee!</h2>
+        <p>Thank you for your interest. Please complete the form below to place your order.</p>
+
+        <form id="orderForm" action="https://formsubmit.co/abrahamsamuel645@gmail.com" method="POST">
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_template" value="table" />
+           <input type="hidden" name="_redirect" value="http://localhost:8000/aromaform.html.com/thankyou.html">
+
+
+
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="Full Name" required />
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="Email" required />
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="Phone Number" required />
+
+            <h3>Select Your Products</h3>
+            <div class="product-grid">
+                <label><input type="checkbox" name="Product 500ml" value="Aroma Ghee 500 ml - ₹300" data-price="300"
+                        class="product"> Aroma Ghee 500 ml</label>
+                <input type="number" name="Quantity 500ml" min="0" value="0" class="qty">
+                <label><input type="checkbox" name="Product 200ml" value="Aroma Ghee 200 ml - ₹120" data-price="120"
+                        class="product"> Aroma Ghee 200 ml</label>
+                <input type="number" name="Quantity 200ml" min="0" value="0" class="qty">
+                <label><input type="checkbox" name="Product 100ml" value="Aroma Ghee 100 ml - ₹60" data-price="60"
+                        class="product"> Aroma Ghee 100 ml</label>
+                <input type="number" name="Quantity 100ml" min="0" value="0" class="qty">
+                <label><input type="checkbox" name="Product 50ml" value="Aroma Ghee 50 ml - ₹30" data-price="30"
+                        class="product"> Aroma Ghee 50 ml</label>
+                <input type="number" name="Quantity 50ml" min="0" value="0" class="qty">
+            </div>
+
+            <div class="total-price" id="totalPrice">Total: ₹0</div>
+
+            <label for="address">Delivery Address</label>
+            <textarea id="address" name="Delivery Address" rows="4" required></textarea>
+
+            <button type="submit">Submit Order</button>
+            <div id="successMessage">✅ Order submitted successfully!</div>
+        </form>
+
+    </div>
+
+    <script>
+        const form = document.getElementById("orderForm");
+        const products = document.querySelectorAll(".product");
+        const quantities = document.querySelectorAll(".qty");
+        const totalPrice = document.getElementById("totalPrice");
+
+        function calculateTotal() {
+            let total = 0;
+            products.forEach((checkbox, index) => {
+                const qty = parseInt(quantities[index].value) || 0;
+                if (checkbox.checked && qty > 0) {
+                    const price = parseInt(checkbox.dataset.price);
+                    total += price * qty;
+                }
+            });
+            totalPrice.innerText = "Total: ₹" + total;
+        }
+
+        products.forEach((cb, i) => {
+            cb.addEventListener("change", calculateTotal);
+            quantities[i].addEventListener("input", calculateTotal);
+        });
+
+        form.addEventListener("submit", function (event) {
+            const oneSelected = Array.from(products).some((cb, i) => cb.checked && quantities[i].value > 0);
+            if (!oneSelected) {
+                alert("⚠️ Please select at least one product and specify quantity.");
+                event.preventDefault();
+                return;
+            }
+
+            // Success message only after redirect
+            setTimeout(() => {
+                document.getElementById("successMessage").style.display = "block";
+                form.reset();
+                calculateTotal();
+            }, 1000);
+        });
+
+
+        
+        
+
+        // Enable/disable quantity inputs based on checkbox
+        products.forEach((checkbox, index) => {
+            const qtyInput = quantities[index];
+
+            // Initially disable all quantity inputs
+            qtyInput.disabled = true;
+
+            checkbox.addEventListener("change", () => {
+                if (checkbox.checked) {
+                    qtyInput.disabled = false;
+                    if (qtyInput.value === "0" || qtyInput.value === "") {
+                        qtyInput.value = 1; // default quantity
+                    }
+                } else {
+                    qtyInput.disabled = true;
+                    qtyInput.value = "";
+                }
+                calculateTotal();
+            });
+
+            qtyInput.addEventListener("input", calculateTotal);
+        });
+
+        form.addEventListener("submit", function (event) {
+            const oneSelected = Array.from(products).some((cb, i) => cb.checked && quantities[i].value > 0);
+            if (!oneSelected) {
+                alert("⚠️ Please select at least one product and specify quantity.");
+                event.preventDefault();
+                return;
+            }
+
+            // Success message after short delay
+            setTimeout(() => {
+                document.getElementById("successMessage").style.display = "block";
+                form.reset();
+                quantities.forEach(q => q.disabled = true); // reset disabled
+                calculateTotal();
+            }, 1000);
+        });
+
+
+    </script>
+
+    <a href="aromaproject.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <!-- FOOTER NAV LINKS -->
+    <p class="footer-nav">
+        <a href="aromaform.html">Order Our Products</a> |
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="about.html">About Us</a>
+    </p>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="logo.png" alt="Aroma Logo">
+                <p>© 2025 Sam and Dani Agency Pvt Ltd</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="aromaproject.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="product.html">Products</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="footer-contact">
+                <p><strong>Call:</strong> +91 9894987875</p>
+                <p><strong>Email:</strong> infoaroma@airtelmail.in</p>
+                <p><strong>GST:</strong> 33ABCCS2484C1ZN</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
